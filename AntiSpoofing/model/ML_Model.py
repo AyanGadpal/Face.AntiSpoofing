@@ -58,24 +58,24 @@ class ML_Model:
         histogram[j] = histr
     return np.array(histogram)
   
-  def predict(self,img):
-    
-    tic = timeit.default_timer()
-    img_ycrcb = cv2.cvtColor(img, cv2.COLOR_BGR2YCR_CB)
-    img_luv = cv2.cvtColor(img, cv2.COLOR_BGR2LUV)
+  def predict(self,img_batch, threshold=0.7):
+    pred_list = []
 
-    ycrcb_hist = self.calc_hist(img_ycrcb)
-    luv_hist = self.calc_hist(img_luv)
+    for img in img_batch:
+      img_ycrcb = cv2.cvtColor(img, cv2.COLOR_BGR2YCR_CB)
+      img_luv = cv2.cvtColor(img, cv2.COLOR_BGR2LUV)
 
-    feature_vector = np.append(ycrcb_hist.ravel(), luv_hist.ravel())
-    feature_vector = feature_vector.reshape(1, len(feature_vector))
-    prediction = self.model.predict_proba(feature_vector)
-    
-    prob = prediction[0][1]
-    toc = timeit.default_timer()
-    print("[ANTISPOOF TIME] : ",toc-tic)
+      ycrcb_hist = self.calc_hist(img_ycrcb)
+      luv_hist = self.calc_hist(img_luv)
 
-    if prob >= 0.7:
-      return 0 # Spoof
-    else:
-      return 1 # Real
+      feature_vector = np.append(ycrcb_hist.ravel(), luv_hist.ravel())
+      feature_vector = feature_vector.reshape(1, len(feature_vector))
+      prediction = self.model.predict_proba(feature_vector)
+      
+      prob = prediction[0][1]
+
+      if prob >= threshold:
+        pred_list.append(0) # Spoof
+      else:
+        pred_list.append(1) # Real
+    return pred_list

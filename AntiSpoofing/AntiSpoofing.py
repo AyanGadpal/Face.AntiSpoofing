@@ -63,16 +63,23 @@ class AntiSpoofing:
     else:
       print("[ERROR] Model Not Found !")
     
-  def predict(self,imgPath):
+  def predict(self,imgPath, threshold = None):
     # Face Detection 
     face = None
-    if self.mode == "BGR" or self.mode == "BGR-MASK":
-      if isinstance(imgPath,str):
-        print("[ERROR] :"+self.ModelName+" Need Image NPARRAY")
-        return
-      # Pass to model predict
+
+    THRESHOLD_MODEL = ["ML-Print","ML-Replay","DeNoise"]
+
+    # if self.mode == "BGR" or self.mode == "BGR-MASK":
+    if isinstance(imgPath,str):
+      print("[ERROR] :"+self.ModelName+" Need Image NPARRAY")
+      return
+      
+    # Pass to model predict
+    if self.ModelName in THRESHOLD_MODEL and threshold:
+      prediction = self.model.predict(imgPath, threshold)
+    else:
       prediction = self.model.predict(imgPath)
-      return(prediction)
+    return(prediction)
 
   @staticmethod
   def PrintModelChoice():
