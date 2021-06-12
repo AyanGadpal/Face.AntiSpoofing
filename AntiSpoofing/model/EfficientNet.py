@@ -29,8 +29,9 @@ class EfficientNet:
       crop_pct=0.949
       )  
   
-  def preprocess(self,cvimg):
-    img = Image.fromarray(cv2.cvtColor(cvimg, cv2.COLOR_BGR2RGB))
+  def preprocess(self,img, IS_CV_IMAGE=True):
+    if IS_CV_IMAGE:
+      img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     input = self.preprocessor(img)
     return input.to(self.device)
 
@@ -40,6 +41,12 @@ class EfficientNet:
     output = torch.argmin(output, dim=1)
     return output
 
-  def postprocess(self,pretrain):
-    pass
-  
+  def predict(self, imgs, IS_CV_IMAGE=True):
+    img_list = []
+    for img in imgs:
+      temp = self.preprocess(img, IS_CV_IMAGE)
+      img_list.append(temp) 
+    tensor_batch = torch.stack(img_list, dim=0)
+    preds = self.process(tensor_batch)
+    print("RESULT  ",preds)
+    return preds

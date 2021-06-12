@@ -72,7 +72,7 @@ class AntiSpoofing:
         return
       # Pass to model predict
       prediction = self.model.predict(imgPath)
-      print(self.lable(prediction))
+      return(prediction)
 
   @staticmethod
   def PrintModelChoice():
