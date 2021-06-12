@@ -66,16 +66,14 @@ class AntiSpoofing:
   def predict(self,imgPath, threshold = None):
     # Face Detection 
     face = None
-
-    THRESHOLD_MODEL = ["ML-Print","ML-Replay","HyperFAS","DeNoise"]
+    THRESHOLD_MODEL = ["FaceBagNet32","FaceBagNet48","FaceBagNet64","ML-Print","ML-Replay","HyperFAS","DeNoise"]
 
     # if self.mode == "BGR" or self.mode == "BGR-MASK":
     if isinstance(imgPath,str):
       print("[ERROR] :"+self.ModelName+" Need Image NPARRAY")
       return
-      
     # Pass to model predict
-    if self.ModelName in THRESHOLD_MODEL and threshold:
+    if self.ModelName in THRESHOLD_MODEL and threshold != None:
       prediction = self.model.predict(imgPath, threshold)
     else:
       prediction = self.model.predict(imgPath)

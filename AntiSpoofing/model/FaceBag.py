@@ -17,25 +17,29 @@ class FaceBagNet(Net):
     self.mode = "BGR-MASK"
     self.eval() # Set to Testing Mode
     self.name = pretrain[-16:-4]
+    self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-  def predict(self,image):
-    image = cv2.resize(image,(112,112))
-    image = image.astype(np.float32)
-    image = image / 255.00 # Normalize 
-    input = ToTensor()(image) # PyTorch ke nakhare
-    input = np.expand_dims(input, axis=0) # Add n as 1st of 4d input
-    input = torch.FloatTensor(input)
-    with torch.no_grad():
-      b = 1
-      n,c,w,h = input.size() # c=channel, w=width and h=height : Default 3,112,112 BGR
-      self.to('cuda')
-      input = input.to('cuda')
-      logit,logit_id, fea   = self.__call__(input)
-      logit = logit.view(b,n,2)
-      logit = torch.mean(logit, dim = 1, keepdim = False)
-      prob = F.softmax(logit, 1)
-      prob = prob.data.cpu().numpy()
-    if prob[0][0] > 0.7:
-      return 0 #Spoof
-    else:
-      return 1 #Real
+  def predict(self,image_batch, threshold = 0.7):
+    preds_list = []
+    for image in image_batch:
+      image = cv2.resize(image,(112,112))
+      image = image.astype(np.float32)
+      image = image / 255.00 # Normalize 
+      input = ToTensor()(image) # PyTorch 
+      input = np.expand_dims(input, axis=0) # Add n as 1st of 4d input
+      input = torch.FloatTensor(input)
+      with torch.no_grad():
+        b = 1
+        n,c,w,h = input.size() # c=channel, w=width and h=height : Default 3,112,112 BGR
+        self.to(self.device)
+        input = input.to(self.device)
+        logit,logit_id, fea   = self.__call__(input)
+        logit = logit.view(b,n,2)
+        logit = torch.mean(logit, dim = 1, keepdim = False)
+        prob = F.softmax(logit, 1)
+        prob = prob.data.cpu().numpy()
+      if prob[0][0] > threshold:
+        preds_list.append(0) #Spoof
+      else:
+        preds_list.append(1) #Real
+    return preds_list
