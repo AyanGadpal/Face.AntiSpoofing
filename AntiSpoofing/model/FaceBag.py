@@ -16,6 +16,7 @@ class FaceBagNet(Net):
     self.load_pretrain(pretrain)
     self.mode = "BGR-MASK"
     self.eval() # Set to Testing Mode
+    self.name = pretrain[-16:-4]
 
   def predict(self,image):
     image = cv2.resize(image,(112,112))
