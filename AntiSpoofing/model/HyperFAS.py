@@ -19,15 +19,16 @@ class HyperFAS:
     self.name = "HyperFAS"
     print("[INFO] : Loaded HyperFAS")  
 
-  def predict(self,imag,threshold = 0.95):
-    X = (cv2.resize(imag,(224,224))-127.5)/127.5
-    X = np.array([X])
-    tic = timeit.default_timer()
-    score = self.model.predict(X)[0]
-    toc = timeit.default_timer()
-    print("[INFERENCE TIME] : ",toc-tic)
+  def predict(self,img_batch,threshold = 0.95):
+    preds_list = []
+    for imag in img_batch:
+      X = (cv2.resize(imag,(224,224))-127.5)/127.5
+      X = np.array([X])
+      score = self.model.predict(X)[0]
+      if score > threshold:
+        preds_list.append(1) # Real
+      else:
+        preds_list.append(0) # Spoof
+    return preds_list
 
-    if score > threshold:
-      return 1
-    else:
-      return 0
+      

@@ -67,7 +67,7 @@ class AntiSpoofing:
     # Face Detection 
     face = None
 
-    THRESHOLD_MODEL = ["ML-Print","ML-Replay","DeNoise"]
+    THRESHOLD_MODEL = ["ML-Print","ML-Replay","HyperFAS","DeNoise"]
 
     # if self.mode == "BGR" or self.mode == "BGR-MASK":
     if isinstance(imgPath,str):
