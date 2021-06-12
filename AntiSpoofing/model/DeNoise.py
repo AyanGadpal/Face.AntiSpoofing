@@ -29,12 +29,15 @@ class DeNoise:
       self.image  = tf.get_default_graph().get_tensor_by_name("input:0")
       self.scores = tf.get_default_graph().get_tensor_by_name("Mean_2:0")
 
-  def predict(self,img,threshold = 0.45):
-    sc = self.sess.run(self.scores,feed_dict={self.image : img})
-    if sc <= threshold:
-      return 1
-    else:
-      return 0
+  def predict(self,img_batch,threshold = 0.45):
+    preds = []
+    for img in img_batch:
+      sc = self.sess.run(self.scores,feed_dict={self.image : img})
+      if sc <= threshold:
+        preds.append(1)
+      else:
+        preds.append(0)
+    return preds
 
   # def predict_v1(self,img,threshold = 0.45):
   #     import tensorflow.compat.v1 as tf
