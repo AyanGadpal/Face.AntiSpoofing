@@ -14,7 +14,7 @@ AntiSpoofing.PrintModelChoice()
 ```
 Use obj.setModel to select model to use. Each model has accuracy performance trade-off. 
 
-# Citations 
-
-
+# References 
+1. Shen, Tao & Huang, Yuyu. (2019). FaceBagNet: Bag-Of-Local-Features Model for Multi-Modal Face Anti-Spoofing. 10.1109/CVPRW.2019.00203.
+2. [HyperFAS](https://spotvisionai.streamlit.app/)
 
